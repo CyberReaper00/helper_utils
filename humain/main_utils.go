@@ -1,4 +1,4 @@
-package github.com/CyberReaper00/helper_utils/humain
+package 'github.com/CyberReaper00/helper_utils/humain'
 
 import (
     "os"
@@ -16,24 +16,6 @@ func Input(msg string, val ...any) string {
     data, _	:= reader.ReadString('\n')
     input	:= strings.TrimSpace(data)
     return input
-}
-
-func IntSliceContains(slice []int, target int) bool {
-    for _, num := range slice {
-	if num == target {
-	    return true
-	}
-    }
-    return false
-}
-
-func StrSliceContains(slice []string, target string) bool{
-    for _, str := range slice {
-	if str == target {
-	    return true
-	}
-    }
-    return false
 }
 
 func ExitMsg() {
@@ -96,4 +78,22 @@ func Msg(msg string, color string, fg bool, val ...any) {
     }
 
     fmt.Printf(color_code+msg+"\033[0m", val...)
+}
+
+func IntSliceContains(slice []int, target int) bool {
+    for _, num := range slice {
+	if num == target {
+	    return true
+	}
+    }
+    return false
+}
+
+func StrSliceContains(slice []string, target string) bool{
+    for _, str := range slice {
+	if str == target {
+	    return true
+	}
+    }
+    return false
 }
