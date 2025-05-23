@@ -37,8 +37,7 @@ func StrSliceContains(slice []string, target string) bool{
 }
 
 func ExitMsg() {
-    fmt.Println("\n\033[1;30;42m Press Enter to exit... \033[0m")
-    xyz := Input()
+    xyz := Input("\n\033[1;30;42m Press Enter to exit... \033[0m\n")
     if xyz != "" {
 	ExitMsg()
     }
