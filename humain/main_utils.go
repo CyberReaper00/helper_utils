@@ -1,4 +1,4 @@
-package humain
+package github.com/CyberReaper00/helper_utils/humain
 
 import (
     "fmt"
