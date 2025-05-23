@@ -26,7 +26,7 @@ func IntSliceContains(slice []int, target int) bool {
     return false
 }
 
-func StringSliceContains(slice []string, target string) bool{
+func StrSliceContains(slice []string, target string) bool{
     for _, str := range slice {
 	if str == target {
 	    return true
@@ -44,8 +44,17 @@ func ExitMsg() {
     return
 }
 
+func Err(msg string, err error, fg bool, val ...any) {
+    var scheme int
+    if fg { scheme = 3
+    } else { scheme = 4 }
+
+    if err != nil { log.Fatalf(fmt.Sprintf("\033[1;%d1m", scheme) + fmt.Sprintf(msg, val...) + "\033[0m\n") }
+}
+
 func Msg(msg string, color string, fg bool, val ...any) {
     var scheme int
+
     if fg { scheme = 3
     } else { scheme = 4 }
 
@@ -60,7 +69,7 @@ func Msg(msg string, color string, fg bool, val ...any) {
 	    case "purple": 	color_code = fmt.Sprintf("\033[1;%d5m", scheme)
 	    case "teal": 	color_code = fmt.Sprintf("\033[1;%d6m", scheme)
 	    case "beige": 	color_code = fmt.Sprintf("\033[1;%d7m", scheme)
-	    default: log.Fatalln(fmt.Sprintf("\033[1;42 Invalid color '%s' given\033[0m", color))
+	    default: log.Fatalln(fmt.Sprintf("\033[1;41 Invalid color '%s' given\033[0m", color))
 	}
 
     } else {
