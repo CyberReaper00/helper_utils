@@ -20,9 +20,7 @@ func Input(msg string, val ...any) string {
 
 func ExitMsg() {
     xyz := Input("\n\033[1;30;42m Press Enter to exit... \033[0m\n")
-    if xyz != "" {
-	ExitMsg()
-    }
+    if xyz != "" { ExitMsg() }
     return
 }
 
@@ -66,8 +64,9 @@ func Msg(msg string, color string, fg bool, val ...any) {
 	b64, errB := strconv.ParseInt(hex[4:6], 16, 0)
 
 	if errR != nil || errG != nil || errB != nil {
-	    log.Fatalln("\033[1;32mParsing Error:\n" +
-			"Unknown value was encountered when parsing hex code\033[0m")
+	    log.Fatalln("" +
+	    "\033[1;32mParsing Error:\n" +
+	    "Unknown value was encountered when parsing hex code\033[0m")
 	}
 
 	r := int(r64)
@@ -82,18 +81,14 @@ func Msg(msg string, color string, fg bool, val ...any) {
 
 func IntSliceContains(slice []int, target int) bool {
     for _, num := range slice {
-	if num == target {
-	    return true
-	}
+	if num == target { return true }
     }
     return false
 }
 
 func StrSliceContains(slice []string, target string) bool{
     for _, str := range slice {
-	if str == target {
-	    return true
-	}
+	if str == target { return true }
     }
     return false
 }
