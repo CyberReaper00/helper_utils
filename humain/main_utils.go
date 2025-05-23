@@ -1,4 +1,4 @@
-package 'github.com/CyberReaper00/helper_utils/humain'
+package humain
 
 import (
     "os"
