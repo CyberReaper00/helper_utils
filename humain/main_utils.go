@@ -34,12 +34,12 @@ func Err(msg string, err error, fg bool, val ...any) {
 
 func Msg(msg string, color string, fg bool, val ...any) {
     var scheme int
+    var color_code string
 
     if fg { scheme = 3
     } else { scheme = 4 }
 
     if !strings.Contains(color, "#") {
-	var color_code string
 	switch color {
 	    case "black": 	color_code = fmt.Sprintf("\033[1;%d0m", scheme)
 	    case "red": 	color_code = fmt.Sprintf("\033[1;%d1m", scheme)
