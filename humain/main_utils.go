@@ -1,6 +1,7 @@
 package github.com/CyberReaper00/helper_utils/humain
 
 import (
+    "os"
     "fmt"
     "log"
     "bufio"
@@ -37,9 +38,9 @@ func StrSliceContains(slice []string, target string) bool{
 
 func ExitMsg() {
     fmt.Println("\n\033[1;30;42m Press Enter to exit... \033[0m")
-    xyz := input()
+    xyz := Input()
     if xyz != "" {
-	exit_()
+	ExitMsg()
     }
     return
 }
@@ -60,7 +61,7 @@ func Msg(msg string, color string, fg bool, val ...any) {
 
     if !strings.Contains(color, "#") {
 	var color_code string
-	switch {
+	switch color {
 	    case "black": 	color_code = fmt.Sprintf("\033[1;%d0m", scheme)
 	    case "red": 	color_code = fmt.Sprintf("\033[1;%d1m", scheme)
 	    case "green": 	color_code = fmt.Sprintf("\033[1;%d2m", scheme)
