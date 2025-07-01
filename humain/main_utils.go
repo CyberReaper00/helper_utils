@@ -12,6 +12,8 @@ import (
 
 func TrueType(data string) any {
 
+	if strings.ToLower(data) == "f" || strings.ToLower(data) == "t" { return data }
+
 	if i, err := strconv.Atoi(data); err == nil { return i }
 	if b, err := strconv.ParseBool(data); err == nil { return b }
 	if f, err := strconv.ParseFloat(data, 64); err == nil { return f }
