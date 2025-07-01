@@ -7,6 +7,7 @@ import (
     "bufio"
     "strings"
     "strconv"
+	"reflect"
 )
 
 func TrueType(data string) any {
@@ -27,22 +28,32 @@ func Input(msg string, val ...any) any {
     return input
 }
 
-const top = "╭────────────────────────────────────────╮"
-const mid = "├────────────────────────────────────────┤"
-const bot = "╰────────────────────────────────────────╯"
-func InputMenu(msgs ...string) []any {
+const top = "╭──────────────────────────────────────────────────╮"
+const mid = "├──────────────────────────────────────────────────┤"
+const bot = "╰──────────────────────────────────────────────────╯"
+func InputMenu(lc_msgs ...int, msgs ...string) []any {
 
 	if len(msgs) < 1 { log.Fatalln("Error: No arguments were provided for the menu") }
 
 	fmt.Println("\033[H\033[2J")
 	final_slice := make( []any, len(msgs) )
+
 	for i, msg := range msgs {
-		if i == 0 {
-			fmt.Println(top)
-		} else if i > 0 && i < len(msgs) {
-			fmt.Println(mid)
+
+		// Input handling
+		if i == 0 { fmt.Println(top)
+		} else if i > 0 && i < len(msgs) { fmt.Println(mid) }
+		user_input := Input("│ %s: ", msg)
+
+		// Output handling
+		for _, lcm := range lc_msgs {
+
+			if IntSliceContains(lcm, i) && reflect.TypeOf(user_input).Kind() == reflect.String {
+				str_inp := user_input.(string)
+				final_slice[i] = strings.ToLower(str_inp)
+
+			} else { final_slice[i] = user_input }
 		}
-		final_slice[i] = Input("│ %s: ", msg)
 	}
 
 	fmt.Println(bot)
