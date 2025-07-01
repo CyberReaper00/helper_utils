@@ -31,7 +31,7 @@ func Input(msg string, val ...any) any {
 const top = "╭──────────────────────────────────────────────────╮"
 const mid = "├──────────────────────────────────────────────────┤"
 const bot = "╰──────────────────────────────────────────────────╯"
-func InputMenu(lc_msgs ...int, msgs ...string) []any {
+func InputMenu(lc_msgs []int, msgs ...string) []any {
 
 	if len(msgs) < 1 { log.Fatalln("Error: No arguments were provided for the menu") }
 
@@ -46,14 +46,13 @@ func InputMenu(lc_msgs ...int, msgs ...string) []any {
 		user_input := Input("│ %s: ", msg)
 
 		// Output handling
-		for _, lcm := range lc_msgs {
+		if IntSliceContains(lc_msgs, i + 1) || IntSliceContains(lc_msgs, -1) &&
+			reflect.TypeOf(user_input).Kind() == reflect.String {
 
-			if IntSliceContains(lcm, i) && reflect.TypeOf(user_input).Kind() == reflect.String {
-				str_inp := user_input.(string)
-				final_slice[i] = strings.ToLower(str_inp)
+			str_inp := user_input.(string)
+			final_slice[i] = strings.ToLower(str_inp)
 
-			} else { final_slice[i] = user_input }
-		}
+		} else if IntSliceContains(lc_msgs, 0) { final_slice[i] = user_input }
 	}
 
 	fmt.Println(bot)
