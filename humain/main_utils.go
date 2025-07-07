@@ -21,7 +21,7 @@ func TrueType(data string) any {
 }
 
 func Input(msg string, val ...any) any {
-    fmt.Printf(msg, val...)
+	fmt.Printf(msg + ": ", val...)
 
     reader 	:= bufio.NewReader(os.Stdin)
     data, _	:= reader.ReadString('\n')
@@ -45,7 +45,7 @@ func InputMenu(lc_msgs []int, msgs ...string) []any {
 		// Input handling
 		if i == 0 { fmt.Println(top)
 		} else if i > 0 && i < len(msgs) { fmt.Println(mid) }
-		user_input := Input("│ %s: ", msg)
+		user_input := Input("│ %s", msg)
 
 		// Output handling
 		if IntSliceContains(lc_msgs, i + 1) || IntSliceContains(lc_msgs, -1) &&
