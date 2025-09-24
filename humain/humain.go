@@ -30,6 +30,8 @@ func Input(msg string, val ...any) any {
     return input
 }
 
+func Print(msg string) { fmt.Printf("%v\n", msg) }
+
 const top = "╭──────────────────────────────────────────────────╮"
 const mid = "├──────────────────────────────────────────────────┤"
 const bot = "╰──────────────────────────────────────────────────╯"
@@ -61,9 +63,9 @@ func InputMenu(lc_msgs []int, msgs ...string) []any {
 	return final_slice
 }
 
-func ExitMsg() {
-    xyz := Input("\n\033[1;42m Press Enter to exit... \033[0m\n")
-    if xyz != "" { ExitMsg() }
+func PauseExit() {
+    sdf := Input("\n\033[1;42m Press Enter to exit... \033[0m\n")
+    if sdf != "" { ExitMsg() }
     return
 }
 
@@ -78,8 +80,8 @@ func PrettyErr(msg string, err error, fg bool, val ...any) {
 
     if err != nil {
 		log.Fatalf(fmt.Sprintf("\033[1;%d1m", scheme) +
-		fmt.Sprintf(msg, val...) +
-		"\033[0m\n")
+				fmt.Sprintf(msg, val...) +
+				"\033[0m\n")
 	}
 }
 
@@ -127,7 +129,7 @@ func PrettyMsg(msg string, color string, fg bool, val ...any) {
 		color_code = fmt.Sprintf("\033[%d8;2;%d;%d;%dm", scheme, r, g, b)
     }
 
-    fmt.Printf(color_code+msg+"\033[0m", val...)
+    fmt.Printf(color_code+msg+"\033[0m\n", val...)
 }
 
 func IntSliceContains(slice []int, target int) bool {

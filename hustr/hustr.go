@@ -4,13 +4,13 @@ import (
     "strconv"
 )
 
-func I64ToStr(input []int64, type_ int) []string {
+func IntSliceToStr(input []int64, type_ int) []string {
     out := make([]string, len(input))
     for i, val := range input { out[i] = strconv.FormatInt(val, type_) }
     return out
 }
 
-func F64ToStr(input []float64, type_ int) []string {
+func FloatSliceToStr(input []float64, type_ int) []string {
     out := make([]string, len(input))
     for i, val := range input { out[i] = strconv.FormatFloat(val, 'f', -1, type_) }
     return out
