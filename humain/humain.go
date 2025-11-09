@@ -4,38 +4,120 @@ import (
     "os"
     "fmt"
     "log"
+	"math"
     "bufio"
     "strings"
     "strconv"
 	"reflect"
 )
 
-func TrueType(data string) any {
-
-	if strings.ToLower(data) == "f" || strings.ToLower(data) == "t" { return data }
-
-	if i, err := strconv.Atoi(data); err == nil { return i }
-	if b, err := strconv.ParseBool(data); err == nil { return b }
-	if f, err := strconv.ParseFloat(data, 64); err == nil { return f }
-	return data
+// Print accepts a string and prints the specified string with a newline
+// It is meant to be a combination of fmt.Println and fmt.Printf and lets
+// you print a bunch of messages in one go
+func Print(msg ...any) {
+	if len(msg) == 0 { msg = append(msg, "") }
+	for _, item := range msg { fmt.Printf("%v\n", item) }
 }
 
+// Print_List accepts a []string and prints all items present in an ascii box,
+// with all the items seperated by bars
+func Print_List(msg string, list []string) {
+	Print("", msg)
+
+	var list_len int
+	for _, item := range list { list_len += len(item)+3 }
+
+	fmt.Printf("\t┏%s┓\n", strings.Repeat("━", list_len-1)); fmt.Print("\t┃ ")
+	for _, item := range list { fmt.Print(item + " ┃ ") }
+	Print(); fmt.Printf("\t┗%s┛\n", strings.Repeat("━", list_len-1))
+	Print()
+}
+
+// Get_Type takes in a value as an any type and returns its actual type as a string
+func Get_Type(value any) string {
+	switch value.(type) {
+		case int:	  return "int"
+		case bool:	  return "bool"
+		case float32: return "float32"
+		case float64: return "float64"
+		default:	  return "string"
+	}
+}
+
+// Check_Type checks the given value for the specified type and returns a bool
+func Check_Type(value any, check_type string) bool {
+	switch check_type {
+		case "int":		return reflect.TypeOf(value).Kind() == reflect.Int
+		case "float32":	return reflect.TypeOf(value).Kind() == reflect.Float32
+		case "float64":	return reflect.TypeOf(value).Kind() == reflect.Float64
+		case "string":	return reflect.TypeOf(value).Kind() == reflect.String
+	}
+
+	// unreachable
+	return false
+}
+
+// True_Type takes in any type value and converts it into its proper type and returns
+// the converted value as an any type and the type itself as a string value which
+// can be used for comparisons
+func True_Type(data any) (any, string) {
+
+	// [EDGE CASE] the value entered might be string and has no need to be checked
+	// seperately so it is returned immediately if string, otherwise it moves onto be
+	// parsed for a different type
+	str, ok := data.(string);
+	if ok { return str, "string" }
+
+	// [EDGE CASE] t and f are considered as bool by ParseBool and the user might
+	// want the value t or f instead of getting a bool, so they are returned immediately
+	// as strings
+	if strings.ToLower(str) == "f" || strings.ToLower(str) == "t" { return data, "string" }
+
+	var converted_value any
+	switch data.(type) {
+		case int:  converted_value = data
+		case bool: converted_value = data
+
+		case float64:
+			if data.(float64) - math.Trunc(data.(float64)) == 0 {
+				converted_value = int(data.(float64))
+			} else { converted_value = data }
+
+		case float32:
+			f64 := data.(float64)
+			if f64 - math.Trunc(f64) == 0 { converted_value = int(f64)
+			} else { converted_value = data }
+	}
+
+	got_type := Get_Type(converted_value)
+	return converted_value, got_type
+}
+
+// Input is used to take in a value from the user on the commandline and then
+// converts the string value into its actual type and returns that value as an
+// any type
 func Input(msg string, val ...any) any {
 	fmt.Printf(msg + ": ", val...)
 
-    reader 	:= bufio.NewReader(os.Stdin)
-    data, _	:= reader.ReadString('\n')
-    data1	:= strings.TrimSpace(data)
-	input	:= TrueType(data1)
-    return input
+	reader 	 := bufio.NewReader(os.Stdin)
+	data, _	 := reader.ReadString('\n')
+	data1	 := strings.TrimSpace(data)
+	input, _ := True_Type(data1)
+	return input
 }
-
-func Print(msg string) { fmt.Printf("%v\n", msg) }
 
 const top = "╭──────────────────────────────────────────────────╮"
 const mid = "├──────────────────────────────────────────────────┤"
 const bot = "╰──────────────────────────────────────────────────╯"
-func InputMenu(lc_msgs []int, msgs ...string) []any {
+
+// Input_Menu takes in an []int and an arbitrary amount of messages that
+// will be displayed in the terminal one at a time, inside of box outlines
+// to take in the users input
+//
+// After Input_Menu has gone through all the messages, each reply from the
+// user will be returned in an []any with all values being in there respective
+// types instead of all values being string
+func Input_Menu(lc_msgs []int, msgs ...string) []any {
 
 	if len(msgs) < 1 { log.Fatalln("Error: No arguments were provided for the menu") }
 
@@ -63,17 +145,23 @@ func InputMenu(lc_msgs []int, msgs ...string) []any {
 	return final_slice
 }
 
-func PauseExit() {
-    sdf := Input("\n\033[1;42m Press Enter to exit... \033[0m\n")
-    if sdf != "" { ExitMsg() }
+// Pause_Exit is used to clearly tell the user that the program has been
+// completed by pausing the program exit and informing the uesr with a simple message
+func Pause_Exit() {
+    input := Input("\n\033[1;7m Press Enter to exit... \033[0m\n")
+    if input != "" { Pause_Exit(value) }
     return
 }
 
+// I didnt like the boilerplate error handling in go so i just made this
 func Err(msg string, err error, val ...any) {
     if err != nil { log.Fatalf( fmt.Sprintf(msg, val...) )}
 }
 
-func PrettyErr(msg string, err error, fg bool, val ...any) {
+// Pretty_Err is used to print an error message in any ASNI supported color
+// that you would like, it allows for the changing of fg and bg colors of the
+// specified error message
+func Pretty_Err(msg string, err error, fg bool, val ...any) {
     var scheme int
     if fg { scheme = 3
     } else { scheme = 4 }
@@ -85,7 +173,9 @@ func PrettyErr(msg string, err error, fg bool, val ...any) {
 	}
 }
 
-func PrettyMsg(msg string, color string, fg bool, val ...any) {
+// Pretty_Msg is used to display a message in either an ANSI color or a hex color
+// and prints the message with that text color or background color
+func Pretty_Msg(msg string, color string, fg bool, val ...any) {
     var scheme int
     var color_code string
 
@@ -132,16 +222,69 @@ func PrettyMsg(msg string, color string, fg bool, val ...any) {
     fmt.Printf(color_code+msg+"\033[0m\n", val...)
 }
 
-func IntSliceContains(slice []int, target int) bool {
-    for _, num := range slice {
-		if num == target { return true }
-    }
-    return false
+// TODO: complete the Int_Contains function
+func Int_Contains(num int) {
+	e := 1
+
+	for counter := 0; counter < 2; {
+		num2 := num%int(math.Pow10(e))
+		if num2 == num { counter++ }
+		e++
+	}
+
+	e = e-2
+	e2 := e
+	num_list := make([]int, e)
+	for i := 0; e > 0; i++ {
+		num_list[i] = num%int(math.Pow10(e))
+		e--
+	}
+
+	subt_list := make([]int, e2)
+	slli := len(subt_list) - 1
+	nlli := len(num_list) - 1
+	for i := 0; i < nlli; i++ {
+		if i == 0 { subt_list[slli] = num_list[nlli] }
+		subt_list[i] = num_list[i] - num_list[i+1]
+	}
+
+	ind_num_list := make([]int, e2)
+	for i := 0; i < e2; i++ {
+		ind_num_list[i] = subt_list[i]/int(math.Pow10(e2 - (i+1)))
+	}
+
+	e3 := e2-1
+	i := 0
+	k := 0
+	j := e3
+	final_list := make([]int, e3)
+	for ; i < e3; i++ {
+		for l := 0; l < e3; l++ {
+			final_list[l] = ind_num_list[l]*int(math.Pow10(k+1)) + ind_num_list[l+1]
+		}
+		k++
+		j--
+	}
+// incomplete implementation
 }
 
+// Int_Slice_Contains is meant as an improvement and an addition upon
+// strings.Contains to allow for pattern matching among all ints in a slice
+func Int_Slice_Contains(slice []int, target int) bool {
+	// TODO: replace with Int_Contains
+    target_str := strconv.Itoa(target)
+	for _, num := range slice {
+		str := strconv.Itoa(num)
+		if strings.Contains(str, target_str) { return true }
+	}
+	return false
+}
+
+// Str_Slice_Contains is meant as an improvement upon strings.Contains to allow
+// for pattern matching among all strings in a slice
 func StrSliceContains(slice []string, target string) bool {
-    for _, str := range slice {
-		if str == target { return true }
-    }
-    return false
+	for _, str := range slice {
+		if strings.Contains(str, target) { return true }
+	}
+	return false
 }
