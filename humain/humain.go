@@ -132,13 +132,13 @@ func Input_Menu(lc_msgs []int, msgs ...string) []any {
 		user_input := Input("│ %s", msg)
 
 		// Output handling
-		if IntSliceContains(lc_msgs, i + 1) || IntSliceContains(lc_msgs, -1) &&
+		if Int_Slice_Contains(lc_msgs, i + 1) || Int_Slice_Contains(lc_msgs, -1) &&
 			reflect.TypeOf(user_input).Kind() == reflect.String {
 
 			str_inp := user_input.(string)
 			final_slice[i] = strings.ToLower(str_inp)
 
-		} else if IntSliceContains(lc_msgs, 0) { final_slice[i] = user_input }
+		} else if Int_Slice_Contains(lc_msgs, 0) { final_slice[i] = user_input }
 	}
 
 	fmt.Println(bot)
@@ -282,7 +282,7 @@ func Int_Slice_Contains(slice []int, target int) bool {
 
 // Str_Slice_Contains is meant as an improvement upon strings.Contains to allow
 // for pattern matching among all strings in a slice
-func StrSliceContains(slice []string, target string) bool {
+func Str_Slice_Contains(slice []string, target string) bool {
 	for _, str := range slice {
 		if strings.Contains(str, target) { return true }
 	}
